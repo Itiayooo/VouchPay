@@ -30,6 +30,7 @@ export interface Vendor {
   joinedAt: Date;
   verified: boolean;
   avatarUrl?: string;
+  emailVerified?: boolean;
 }
 
 export interface Buyer {

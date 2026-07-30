@@ -9,7 +9,7 @@ import VendorDashboard from './pages/VendorDashboard';
 import CreateEscrowPage from './pages/CreateEscrowPage';
 import VendorTransactionPage from './pages/VendorTransactionPage';
 import VendorScanPage from './pages/VendorScanPage';
-import VendorProfilePage from './pages/VendorProfilePage';
+import VendorProfilePage from './pages/Vendorprofilepage';
 import BuyerPaymentPage from './pages/BuyerPaymentPage';
 import BuyerQRPage from './pages/BuyerQRPage';
 import AdminDashboard from './pages/AdminDashboard';
