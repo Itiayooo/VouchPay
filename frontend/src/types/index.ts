@@ -97,6 +97,7 @@ export interface VendorStats {
   disputeRate: number;
   completedOrders: number;
   activeOrders: number;
+  emailVerified?: boolean;
 }
 
 // ─── Form Types ──────────────────────────────────────────────────────────────
