@@ -75,9 +75,9 @@ export default function VendorDashboard() {
     <div className="min-h-screen bg-ink-950 flex">
       <VendorSidebar />
 
-      <main className="flex-1 ml-64 p-8 overflow-y-auto">
+      <main className="flex-1 lg:ml-64 p-4 sm:p-6 lg:p-8 overflow-y-auto">
         {/* Header */}
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
           <div>
             <h1 className="font-display font-bold text-2xl text-white mb-1">
               {getGreeting()}, {vendor?.name?.split(' ')[0] ?? 'there'} 👋
@@ -86,7 +86,7 @@ export default function VendorDashboard() {
           </div>
           <button
             onClick={() => navigate('/create')}
-            className="btn-primary flex items-center gap-2"
+            className="btn-primary flex items-center justify-center gap-2 w-full sm:w-auto"
           >
             <Plus size={18} />
             New Escrow Link
@@ -94,7 +94,7 @@ export default function VendorDashboard() {
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           {statCards.map((card, i) => (
             <div key={i} className="card p-6 glass-hover">
               <div className={`w-10 h-10 rounded-xl ${card.bg} flex items-center justify-center ${card.color} mb-4`}>
@@ -109,9 +109,9 @@ export default function VendorDashboard() {
 
         {/* Quick action banner for funded orders */}
         {myTxns.filter(t => t.status === 'funded').length > 0 && (
-          <div className="mb-6 p-4 rounded-2xl bg-vault-500/10 border border-vault-500/20 flex items-center justify-between">
+          <div className="mb-6 p-4 rounded-2xl bg-vault-500/10 border border-vault-500/20 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-vault-500/20 flex items-center justify-center">
+              <div className="w-10 h-10 rounded-xl bg-vault-500/20 flex items-center justify-center flex-shrink-0">
                 <CheckCircle2 size={20} className="text-vault-400" />
               </div>
               <div>
@@ -126,7 +126,7 @@ export default function VendorDashboard() {
                 const funded = myTxns.find(t => t.status === 'funded');
                 if (funded) navigate(`/transaction/${funded.id}`);
               }}
-              className="text-vault-400 hover:text-vault-300 text-sm font-medium flex items-center gap-1 transition-colors"
+              className="text-vault-400 hover:text-vault-300 text-sm font-medium flex items-center gap-1 transition-colors self-start sm:self-auto"
             >
               View <ChevronRight size={14} />
             </button>
@@ -154,11 +154,11 @@ export default function VendorDashboard() {
               {myTxns.map(txn => (
                 <div
                   key={txn.id}
-                  className="px-6 py-5 hover:bg-white/2 transition-colors cursor-pointer group"
+                  className="px-4 sm:px-6 py-5 hover:bg-white/2 transition-colors cursor-pointer group"
                   onClick={() => navigate(`/transaction/${txn.id}`)}
                 >
-                  <div className="flex items-center gap-4">
-                    <div className={`w-2 h-2 rounded-full flex-shrink-0 ${
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
+                    <div className={`w-2 h-2 rounded-full flex-shrink-0 hidden sm:block ${
                       txn.status === 'released' ? 'bg-vault-500' :
                       txn.status === 'funded' ? 'bg-blue-500' :
                       txn.status === 'in_transit' ? 'bg-purple-500' :
@@ -168,12 +168,19 @@ export default function VendorDashboard() {
 
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-3 mb-0.5">
+                        <span className={`w-2 h-2 rounded-full flex-shrink-0 sm:hidden ${
+                          txn.status === 'released' ? 'bg-vault-500' :
+                          txn.status === 'funded' ? 'bg-blue-500' :
+                          txn.status === 'in_transit' ? 'bg-purple-500' :
+                          txn.status === 'disputed' ? 'bg-red-500' :
+                          'bg-ink-600'
+                        }`} />
                         <span className="text-white font-medium text-sm truncate">{txn.itemDescription}</span>
                         <span className={`status-badge text-xs ${getStatusColor(txn.status)}`}>
                           {getStatusLabel(txn.status)}
                         </span>
                       </div>
-                      <div className="flex items-center gap-3 text-xs text-ink-500">
+                      <div className="flex items-center gap-3 text-xs text-ink-500 flex-wrap">
                         <span className="font-mono">{txn.reference}</span>
                         <span>·</span>
                         <span>{txn.buyer.name}</span>
@@ -182,7 +189,7 @@ export default function VendorDashboard() {
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-4 flex-shrink-0">
+                    <div className="flex items-center justify-between sm:justify-end gap-4 flex-shrink-0 pl-5 sm:pl-0">
                       <div className="text-right">
                         <div className="text-white font-mono font-medium text-sm">{formatNaira(txn.itemAmount)}</div>
                         <div className="text-ink-600 text-xs">+ {formatNaira(txn.deliveryFee)} delivery</div>
@@ -203,7 +210,7 @@ export default function VendorDashboard() {
                         </button>
                       </div>
 
-                      <ChevronRight size={16} className="text-ink-700 group-hover:text-ink-400 transition-colors" />
+                      <ChevronRight size={16} className="text-ink-700 group-hover:text-ink-400 transition-colors hidden sm:block" />
                     </div>
                   </div>
                 </div>

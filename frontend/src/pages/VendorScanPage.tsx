@@ -192,12 +192,12 @@ export default function VendorScanPage() {
     <div className="min-h-screen bg-ink-950 flex">
       <VendorSidebar />
 
-      <main className="flex-1 ml-64 p-8 overflow-y-auto">
+      <main className="flex-1 lg:ml-64 p-4 sm:p-6 lg:p-8 pt-20 lg:pt-8 overflow-y-auto">
         {/* Header */}
         <div className="flex items-center gap-4 mb-8">
           <button
             onClick={() => { stopCamera(); navigate('/dashboard'); }}
-            className="w-9 h-9 rounded-xl bg-white/5 hover:bg-white/10 flex items-center justify-center text-ink-400 hover:text-white transition-colors"
+            className="w-9 h-9 rounded-xl bg-white/5 hover:bg-white/10 flex items-center justify-center text-ink-400 hover:text-white transition-colors flex-shrink-0"
           >
             <ArrowLeft size={16} />
           </button>
@@ -207,18 +207,18 @@ export default function VendorScanPage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Left: scanner area */}
-          <div className="col-span-2">
+          <div className="lg:col-span-2">
 
             {/* Mode tabs — only shown at idle */}
             {scanState === 'idle' && (
-              <div className="flex rounded-xl bg-ink-900 p-1 mb-6 border border-white/5 w-fit">
+              <div className="flex rounded-xl bg-ink-900 p-1 mb-6 border border-white/5 w-fit max-w-full overflow-x-auto">
                 {(['qr', 'pin'] as const).map(m => (
                   <button
                     key={m}
                     onClick={() => { setScanMode(m); setCameraError(''); }}
-                    className={`flex items-center gap-2 px-5 py-2 text-sm font-medium rounded-lg transition-all ${
+                    className={`flex items-center gap-2 px-3 sm:px-5 py-2 text-sm font-medium rounded-lg transition-all whitespace-nowrap ${
                       scanMode === m ? 'bg-white/10 text-white' : 'text-ink-500 hover:text-ink-300'
                     }`}
                   >
@@ -230,8 +230,8 @@ export default function VendorScanPage() {
 
             {/* ── IDLE: QR mode ── */}
             {scanState === 'idle' && scanMode === 'qr' && (
-              <div className="card p-8 text-center">
-                <div className="w-72 h-72 rounded-3xl bg-ink-900 border border-white/10 flex items-center justify-center relative overflow-hidden mx-auto mb-6">
+              <div className="card p-6 sm:p-8 text-center">
+                <div className="w-full max-w-[288px] aspect-square rounded-3xl bg-ink-900 border border-white/10 flex items-center justify-center relative overflow-hidden mx-auto mb-6">
                   <Camera size={48} className="text-ink-700" />
                   {['top-3 left-3', 'top-3 right-3', 'bottom-3 left-3', 'bottom-3 right-3'].map((pos, i) => (
                     <div key={i} className={`absolute ${pos} w-8 h-8`}>
@@ -251,7 +251,7 @@ export default function VendorScanPage() {
                 )}
                 <h2 className="font-display font-bold text-xl text-white mb-2">Ready to scan</h2>
                 <p className="text-ink-500 text-sm mb-8">Ask the buyer to open their VouchPay QR code. Point your camera at it.</p>
-                <button onClick={startCamera} className="btn-primary px-10 py-4 flex items-center gap-2 mx-auto text-base">
+                <button onClick={startCamera} className="btn-primary w-full sm:w-auto px-10 py-4 flex items-center justify-center gap-2 mx-auto text-base">
                   <Camera size={18} />
                   Start Camera
                 </button>
@@ -306,7 +306,7 @@ export default function VendorScanPage() {
 
             {/* ── IDLE: PIN mode ── */}
             {scanState === 'idle' && scanMode === 'pin' && (
-              <div className="card p-8 text-center">
+              <div className="card p-6 sm:p-8 text-center">
                 <div className="w-16 h-16 rounded-2xl bg-amber-400/10 border border-amber-400/20 flex items-center justify-center mx-auto mb-6">
                   <Hash size={28} className="text-amber-400" />
                 </div>
@@ -319,7 +319,7 @@ export default function VendorScanPage() {
                 </p>
 
                 {/* 4-digit PIN boxes */}
-                <div className="flex items-center justify-center gap-3 mb-8">
+                <div className="flex items-center justify-center gap-2 sm:gap-3 mb-8">
                   {pinRefs.map((ref, i) => (
                     <input
                       key={i}
@@ -330,7 +330,7 @@ export default function VendorScanPage() {
                       value={pinInput[i]}
                       onChange={e => handlePinKey(i, e.target.value)}
                       onKeyDown={e => handlePinBackspace(i, e)}
-                      className="w-16 h-16 text-center text-2xl font-mono font-bold bg-ink-900 border-2 border-white/10 focus:border-amber-400/60 rounded-xl text-white focus:outline-none transition-colors"
+                      className="w-14 h-14 sm:w-16 sm:h-16 text-center text-2xl font-mono font-bold bg-ink-900 border-2 border-white/10 focus:border-amber-400/60 rounded-xl text-white focus:outline-none transition-colors"
                     />
                   ))}
                 </div>
@@ -338,7 +338,7 @@ export default function VendorScanPage() {
                 <button
                   onClick={handlePinSubmit}
                   disabled={pinInput.some(d => !d)}
-                  className="btn-primary px-10 py-3 disabled:opacity-40 disabled:cursor-not-allowed"
+                  className="btn-primary w-full sm:w-auto px-10 py-3 disabled:opacity-40 disabled:cursor-not-allowed"
                 >
                   Verify PIN & Release Funds
                 </button>
@@ -357,12 +357,12 @@ export default function VendorScanPage() {
             {/* ── SUCCESS ── */}
             {scanState === 'success' && matchedTxn && (
               <div className="space-y-6">
-                <div className="card p-10 text-center vault-border vault-glow">
+                <div className="card p-6 sm:p-10 text-center vault-border vault-glow">
                   <div className="w-24 h-24 rounded-full bg-vault-500/20 border-2 border-vault-500/40 flex items-center justify-center mx-auto mb-6 animate-pulse-slow">
                     <CheckCircle2 size={44} className="text-vault-400" />
                   </div>
                   <h2 className="font-display font-bold text-3xl text-white mb-2">Funds Released!</h2>
-                  <div className="text-5xl font-display font-bold text-gradient-vault mb-3">
+                  <div className="text-4xl sm:text-5xl font-display font-bold text-gradient-vault mb-3">
                     {formatNaira(matchedTxn.totalAmount - matchedTxn.platformFee)}
                   </div>
                   <p className="text-ink-400 mb-2">sent to your bank account</p>
@@ -377,7 +377,7 @@ export default function VendorScanPage() {
                     <div className="w-10 h-10 rounded-xl bg-vault-500/15 flex items-center justify-center flex-shrink-0">
                       <Shield size={18} className="text-vault-400" />
                     </div>
-                    <div className="flex-1">
+                    <div className="flex-1 min-w-0">
                       <div className="text-white font-medium text-sm mb-1">{matchedTxn.itemDescription}</div>
                       <div className="text-ink-500 text-xs font-mono">{matchedTxn.reference}</div>
                       <div className="text-ink-500 text-xs mt-1">Buyer: {matchedTxn.buyer.name}</div>
@@ -385,7 +385,7 @@ export default function VendorScanPage() {
                   </div>
                 </div>
 
-                <div className="flex gap-3">
+                <div className="flex flex-col sm:flex-row gap-3">
                   <button onClick={reset} className="btn-secondary flex-1 py-3 flex items-center justify-center gap-2">
                     <RotateCcw size={15} /> Scan Another
                   </button>
@@ -398,14 +398,14 @@ export default function VendorScanPage() {
 
             {/* ── ERROR ── */}
             {scanState === 'error' && (
-              <div className="card p-10 text-center">
+              <div className="card p-6 sm:p-10 text-center">
                 <div className="w-16 h-16 rounded-2xl bg-red-500/10 border border-red-500/20 flex items-center justify-center mx-auto mb-6">
                   <AlertTriangle size={28} className="text-red-400" />
                 </div>
                 <h2 className="font-display font-bold text-xl text-white mb-2">Verification Failed</h2>
                 <p className="text-ink-400 text-sm mb-8 max-w-xs mx-auto">{errorMsg}</p>
-                <div className="flex gap-3 justify-center">
-                  <button onClick={reset} className="btn-secondary px-8 py-3 flex items-center gap-2">
+                <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                  <button onClick={reset} className="btn-secondary px-8 py-3 flex items-center justify-center gap-2">
                     <RotateCcw size={15} /> Try Again
                   </button>
                   <button onClick={() => { reset(); setScanMode('pin'); }} className="btn-primary px-8 py-3">

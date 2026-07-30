@@ -96,7 +96,7 @@ export default function CreateEscrowPage() {
     return (
       <div className="min-h-screen bg-ink-950 flex">
         <VendorSidebar />
-        <main className="flex-1 ml-64 p-8 flex items-center justify-center">
+        <main className="flex-1 lg:ml-64 p-4 sm:p-6 lg:p-8 pt-20 lg:pt-8 flex items-center justify-center">
           <div className="max-w-lg w-full">
             {/* Success state */}
             <div className="text-center mb-8">
@@ -117,7 +117,7 @@ export default function CreateEscrowPage() {
                 </button>
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <button onClick={copyLink} className="btn-primary py-3 flex items-center justify-center gap-2 text-sm">
                   <Copy size={16} />
                   Copy Link
@@ -164,7 +164,7 @@ export default function CreateEscrowPage() {
               </div>
             </div>
 
-            <div className="flex gap-3">
+            <div className="flex flex-col sm:flex-row gap-3">
               <button onClick={() => navigate('/dashboard')} className="btn-secondary flex-1 py-3">
                 Back to Dashboard
               </button>
@@ -181,11 +181,11 @@ export default function CreateEscrowPage() {
   return (
     <div className="min-h-screen bg-ink-950 flex">
       <VendorSidebar />
-      <main className="flex-1 ml-64 p-8 overflow-y-auto">
+      <main className="flex-1 lg:ml-64 p-4 sm:p-6 lg:p-8 pt-20 lg:pt-8 overflow-y-auto">
         <div className="max-w-2xl">
           {/* Header */}
           <div className="flex items-center gap-4 mb-8">
-            <button onClick={() => navigate('/dashboard')} className="w-9 h-9 rounded-xl bg-white/5 hover:bg-white/10 flex items-center justify-center text-ink-400 hover:text-white transition-colors">
+            <button onClick={() => navigate('/dashboard')} className="w-9 h-9 rounded-xl bg-white/5 hover:bg-white/10 flex items-center justify-center text-ink-400 hover:text-white transition-colors flex-shrink-0">
               <ArrowLeft size={16} />
             </button>
             <div>
@@ -214,7 +214,7 @@ export default function CreateEscrowPage() {
                   <p className="text-ink-600 text-xs mt-1">Be specific — this is what the buyer agreed to purchase</p>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="label block mb-2">Item price (₦) *</label>
                     <div className="relative">
@@ -266,7 +266,7 @@ export default function CreateEscrowPage() {
                 Buyer Details
               </h2>
               <div className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="label block mb-2">Buyer name *</label>
                     <input
