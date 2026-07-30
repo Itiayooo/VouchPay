@@ -24,7 +24,7 @@ export default function VendorSidebar() {
     setIsOpen(false);
   };
 
-  const handleNavigate = (path) => {
+  const handleNavigate = (path: string) => {
     navigate(path);
     setIsOpen(false);
   };
