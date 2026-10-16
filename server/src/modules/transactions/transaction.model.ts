@@ -23,6 +23,9 @@ export interface ITransaction {
     notes?: string;
     paymentExpiresAt: Date;
     paidAt?: Date;
+    paystackReference?: string;
+    paystackAccessCode?: string;
+    paymentChannel?: string;
     shippedAt?: Date;
     deliveredAt?: Date;
     releasedAt?: Date;
@@ -70,6 +73,9 @@ const transactionSchema = new Schema<ITransactionDocument>(
         notes: { type: String, trim: true },
         paymentExpiresAt: { type: Date, required: true },
         paidAt: Date,
+        paystackReference: String,
+        paystackAccessCode: String,
+        paymentChannel: String,
         shippedAt: Date,
         deliveredAt: Date,
         releasedAt: Date,

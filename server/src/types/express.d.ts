@@ -4,6 +4,7 @@ declare global {
     namespace Express {
         interface Request {
             vendor?: IVendorDocument;
+            rawBody?: Buffer;
         }
     }
 }
