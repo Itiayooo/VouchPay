@@ -19,6 +19,6 @@ router.use(authenticate);
 router.get('/banks', controller.banks);
 router.post('/resolve', bankLimiter, validate(resolveAccountSchema), controller.resolve);
 router.put('/bank-account', bankLimiter, validate(saveBankAccountSchema), controller.saveBank);
-app.use('/api/payouts', payoutRoutes);
+router.post('/:id/retry', controller.retry);
 
 export default router;

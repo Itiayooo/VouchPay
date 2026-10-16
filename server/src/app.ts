@@ -7,7 +7,7 @@ import authRoutes from './modules/auth/auth.routes';
 import transactionRoutes from './modules/transactions/transaction.routes';
 import paymentRoutes from './modules/payments/payment.routes';
 import handoverRoutes from './modules/handover/handover.routes';
-import payoutRoutes from './modules/payouts/payout.routes';
+import payoutRoutes from './modules/payouts/payout.routes'
 
 const app = express();
 

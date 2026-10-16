@@ -5,6 +5,7 @@ import { hashToken } from '../../utils/token';
 import { Transaction } from '../transactions/transaction.model';
 import { getTransaction, transitionStatus } from '../transactions/transaction.service';
 import { deriveBuyerToken, derivePin, deriveQrToken, safeEqual } from './handover.crypto';
+import { processRelease } from '../payouts/payout.service';
 
 const MAX_ATTEMPTS = 5;
 const LOCK_MINUTES = 30;
@@ -82,5 +83,12 @@ export async function confirmHandover(scanToken: string, input: { qrToken?: stri
         deliveredAt: new Date(),
         handoverMethod: method,
     });
+
+    try {
+        await processRelease(txn.id);
+    } catch (err) {
+        console.error(`Release failed for ${txn.reference}`, err); // stays release_pending; the retry endpoint recovers it
+    }
+
     return { status: 'release_pending' };
 }

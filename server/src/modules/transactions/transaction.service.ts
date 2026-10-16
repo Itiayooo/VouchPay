@@ -109,16 +109,19 @@ export async function transitionStatus(
     from: TransactionStatus,
     to: TransactionStatus,
     note?: string,
-    extra: Record<string, unknown> = {}
+    extra: Record<string, unknown> = {},
+    unset: Record<string, 1> = {}
 ) {
     if (!canTransition(from, to)) {
         throw new AppError(409, `Cannot move from ${from} to ${to}`, 'INVALID_TRANSITION');
     }
-    const updated = await Transaction.findOneAndUpdate(
-        { _id: id, status: from },
-        { $set: { status: to, ...extra }, $push: { statusHistory: { status: to, at: new Date(), note } } },
-        { new: true }
-    );
+    const update: Record<string, unknown> = {
+        $set: { status: to, ...extra },
+        $push: { statusHistory: { status: to, at: new Date(), note } },
+    };
+    if (Object.keys(unset).length) update.$unset = unset;
+
+    const updated = await Transaction.findOneAndUpdate({ _id: id, status: from }, update, { new: true });
     if (!updated) {
         throw new AppError(409, 'This transaction was just updated. Refresh and try again.', 'STATE_CONFLICT');
     }
