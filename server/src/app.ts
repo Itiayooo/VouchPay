@@ -9,6 +9,7 @@ import paymentRoutes from './modules/payments/payment.routes';
 import handoverRoutes from './modules/handover/handover.routes';
 import payoutRoutes from './modules/payouts/payout.routes'
 import refundRoutes from './modules/refunds/refund.routes';
+import disputeRoutes from './modules/disputes/dispute.routes';
 
 const app = express();
 
@@ -34,6 +35,7 @@ app.use('/api/payments', paymentRoutes);
 app.use('/api/handover', handoverRoutes);
 app.use('/api/payouts', payoutRoutes);
 app.use('/api/refunds', refundRoutes);
+app.use('/api/disputes', disputeRoutes);
 
 app.get('/api/health', (_req, res) => {
     res.json({ success: true, service: 'vouchpay-api', time: new Date().toISOString() });
