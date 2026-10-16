@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-const phone = z
+export const phone = z
     .string()
     .regex(/^(\+?234|0)[789][01]\d{8}$/, 'Enter a valid Nigerian phone number');
 
