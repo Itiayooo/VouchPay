@@ -3,6 +3,7 @@ import { asyncHandler } from '../../utils/asyncHandler';
 import * as service from './payment.service';
 import { isValidSignature } from './paystack.service';
 import { handleTransferWebhook } from '../payouts/payout.service';
+import { handleRefundWebhook } from '../refunds/refund.service';
 
 export const initialize = asyncHandler(async (req, res) => {
     const data = await service.initializePayment(req.body.reference, req.body.email);
@@ -25,6 +26,9 @@ export const webhook = asyncHandler(async (req, res) => {
     }
     if (typeof event.event === 'string' && event.event.startsWith('transfer.')) {
         await handleTransferWebhook(event.event, event.data);
+    }
+    if (typeof event.event === 'string' && event.event.startsWith('refund.')) {
+        await handleRefundWebhook(event.event, event.data);
     }
     res.sendStatus(200);
 });
