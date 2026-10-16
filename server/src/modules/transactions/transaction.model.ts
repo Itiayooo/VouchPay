@@ -35,6 +35,11 @@ export interface ITransaction {
     handoverAttempts?: number;
     handoverLockedUntil?: Date;
     handoverMethod?: 'qr' | 'pin';
+    payoutRecipientCode?: string;
+    payoutReference?: string;
+    payoutAttempts?: number;
+    payoutFailureReason?: string;
+    transferCode?: string;
 }
 
 export interface ITransactionDocument extends ITransaction, Document { }
@@ -79,6 +84,11 @@ const transactionSchema = new Schema<ITransactionDocument>(
         paymentExpiresAt: { type: Date, required: true },
         paidAt: Date,
         paystackReference: String,
+        payoutRecipientCode: String,
+        payoutReference: { type: String, index: true },
+        payoutAttempts: { type: Number, default: 0 },
+        payoutFailureReason: String,
+        transferCode: String,
         handoverSalt: { type: String, select: false },
         scanTokenHash: { type: String, select: false, index: true },
         handoverAttempts: { type: Number, default: 0 },

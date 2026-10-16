@@ -23,7 +23,7 @@ async function paystackRequest<T>(path: string, method: 'GET' | 'POST', body?: u
     });
     const json: any = await res.json().catch(() => ({}));
     if (!res.ok || !json.status) {
-        throw new AppError(502, json.message || 'Payment provider error', 'PAYSTACK_ERROR');
+        throw new AppError(502, json.message || 'Payment provider error', `PAYSTACK_${res.status}`);
     }
     return json.data as T;
 }
@@ -59,4 +59,49 @@ export function isValidSignature(rawBody: Buffer, signature?: string): boolean {
         .digest('hex');
     if (!signature || signature.length !== hash.length) return false;
     return crypto.timingSafeEqual(Buffer.from(hash), Buffer.from(signature));
+}
+
+export interface PaystackTransferData {
+    reference: string;
+    amount: number;
+    status: string; // success | pending | otp | failed | reversed
+    transfer_code?: string;
+}
+
+export function listBanks(page: number) {
+    return paystackRequest<{ name: string; code: string }[]>(
+        `/bank?country=nigeria&currency=NGN&perPage=100&page=${page}`,
+        'GET'
+    );
+}
+
+export function resolveAccount(accountNumber: string, bankCode: string) {
+    return paystackRequest<{ account_number: string; account_name: string }>(
+        `/bank/resolve?account_number=${accountNumber}&bank_code=${encodeURIComponent(bankCode)}`,
+        'GET'
+    );
+}
+
+export function createRecipient(p: { name: string; accountNumber: string; bankCode: string }) {
+    return paystackRequest<{ recipient_code: string }>('/transferrecipient', 'POST', {
+        type: 'nuban',
+        name: p.name,
+        account_number: p.accountNumber,
+        bank_code: p.bankCode,
+        currency: 'NGN',
+    });
+}
+
+export function initiateTransfer(p: { amount: number; recipient: string; reference: string; reason: string }) {
+    return paystackRequest<PaystackTransferData>('/transfer', 'POST', {
+        source: 'balance',
+        amount: p.amount,
+        recipient: p.recipient,
+        reference: p.reference,
+        reason: p.reason,
+    });
+}
+
+export function verifyTransfer(reference: string) {
+    return paystackRequest<PaystackTransferData>(`/transfer/verify/${encodeURIComponent(reference)}`, 'GET');
 }

@@ -20,6 +20,11 @@ export interface IVendor {
     isActive: boolean;
     refreshTokenHash?: string;
     joinedAt: Date;
+    bankName?: string;
+    bankCode?: string;
+    accountNumber?: string;
+    accountName?: string;
+    paystackRecipientCode?: string;
 }
 
 export interface IVendorDocument extends IVendor, Document {
@@ -36,6 +41,11 @@ const vendorSchema = new Schema<IVendorDocument>(
         phone: { type: String, required: true, trim: true },
         instagramHandle: { type: String, trim: true },
         whatsappNumber: { type: String, trim: true },
+        bankName: String,
+        bankCode: String,
+        accountNumber: String,
+        accountName: String,
+        paystackRecipientCode: String,
         rating: { type: Number, default: 0 },
         totalTransactions: { type: Number, default: 0 },
         totalVolume: { type: Number, default: 0 },
