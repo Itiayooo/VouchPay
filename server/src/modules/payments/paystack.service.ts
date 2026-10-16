@@ -105,3 +105,22 @@ export function initiateTransfer(p: { amount: number; recipient: string; referen
 export function verifyTransfer(reference: string) {
     return paystackRequest<PaystackTransferData>(`/transfer/verify/${encodeURIComponent(reference)}`, 'GET');
 }
+
+export interface PaystackRefundData {
+    id: number;
+    status: string; // pending | processing | processed | failed | needs-attention
+    amount: number;
+}
+
+export function createRefund(p: { transaction: string; amount: number; note: string }) {
+    return paystackRequest<PaystackRefundData>('/refund', 'POST', {
+        transaction: p.transaction,
+        amount: p.amount,
+        customer_note: p.note,
+        merchant_note: p.note,
+    });
+}
+
+export function listRefunds(transaction: string) {
+    return paystackRequest<PaystackRefundData[]>(`/refund?transaction=${encodeURIComponent(transaction)}`, 'GET');
+}

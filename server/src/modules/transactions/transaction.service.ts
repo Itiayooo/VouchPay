@@ -83,7 +83,7 @@ export async function getTransaction(id: string, requester: { id: string; role: 
 export async function getPublicByReference(reference: string) {
     const txn = await Transaction.findOne({ reference: reference.toUpperCase() })
         .populate('vendor', 'businessName verified rating instagramHandle')
-        .select('-statusHistory -platformFee -vendorPayout -notes -payoutRecipientCode -payoutReference -payoutFailureReason -transferCode');
+        .select('-statusHistory -platformFee -vendorPayout -notes -payoutRecipientCode -payoutReference -payoutFailureReason -transferCode -dispute -refundId -refundInitiatedAt -refundFailureReason -refundThenRelease');
     if (!txn) throw new AppError(404, 'Transaction not found');
     return txn;
 }

@@ -25,7 +25,7 @@ const transitions: Record<TransactionStatus, TransactionStatus[]> = {
     disputed: ['release_pending', 'refund_pending'],
     release_pending: ['released', 'release_failed'],
     release_failed: ['release_pending'],
-    refund_pending: ['refunded', 'refund_failed'],
+    refund_pending: ['refunded', 'refund_failed', 'release_pending'],
     refund_failed: ['refund_pending'],
     released: [],
     refunded: [],
@@ -36,3 +36,13 @@ const transitions: Record<TransactionStatus, TransactionStatus[]> = {
 export function canTransition(from: TransactionStatus, to: TransactionStatus): boolean {
     return transitions[from].includes(to);
 }
+
+export const DISPUTE_REASONS = [
+    'not_as_described',
+    'wrong_item',
+    'damaged',
+    'fake',
+    'not_received',
+    'changed_mind',
+    'other',
+] as const;

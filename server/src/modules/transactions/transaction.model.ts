@@ -1,6 +1,6 @@
 import { Document, Schema, Types, model } from 'mongoose';
 import crypto from 'crypto';
-import { TRANSACTION_STATUSES, TransactionStatus } from './transaction.states';
+import { DISPUTE_REASONS, TRANSACTION_STATUSES, TransactionStatus } from './transaction.states';
 
 export type DeliveryType = 'local' | 'courier';
 
@@ -34,7 +34,26 @@ export interface ITransaction {
     scanTokenHash?: string;
     handoverAttempts?: number;
     handoverLockedUntil?: Date;
-    handoverMethod?: 'qr' | 'pin';
+    handoverMethod?: 'qr' | 'pin' | 'buyer';
+    refundAmount?: number;
+    refundId?: string;
+    refundInitiatedAt?: Date;
+    refundFailureReason?: string;
+    refundThenRelease?: boolean;
+    refundedAt?: Date;
+    dispute?: {
+        raisedAt?: Date;
+        reason?: string;
+        description?: string;
+        evidence?: string[];
+        vendorResponse?: string;
+        vendorEvidence?: string[];
+        status?: 'open' | 'resolved';
+        resolution?: string;
+        mediatorNotes?: string;
+        resolvedAt?: Date;
+        resolvedBy?: Types.ObjectId;
+    };
     payoutRecipientCode?: string;
     payoutReference?: string;
     payoutAttempts?: number;
@@ -93,13 +112,32 @@ const transactionSchema = new Schema<ITransactionDocument>(
         scanTokenHash: { type: String, select: false, index: true },
         handoverAttempts: { type: Number, default: 0 },
         handoverLockedUntil: Date,
-        handoverMethod: { type: String, enum: ['qr', 'pin'] },
+        handoverMethod: { type: String, enum: ['qr', 'pin', 'buyer'] },
         paystackAccessCode: String,
         paymentChannel: String,
         shippedAt: Date,
         deliveredAt: Date,
         releasedAt: Date,
         cancelledAt: Date,
+        refundAmount: Number,
+        refundId: String,
+        refundInitiatedAt: Date,
+        refundFailureReason: String,
+        refundThenRelease: Boolean,
+        refundedAt: Date,
+        dispute: {
+            raisedAt: Date,
+            reason: { type: String, enum: DISPUTE_REASONS },
+            description: String,
+            evidence: [String],
+            vendorResponse: String,
+            vendorEvidence: [String],
+            status: { type: String, enum: ['open', 'resolved'] },
+            resolution: String,
+            mediatorNotes: String,
+            resolvedAt: Date,
+            resolvedBy: { type: Schema.Types.ObjectId, ref: 'Vendor' },
+        },
     },
     {
         timestamps: true,
@@ -117,5 +155,6 @@ const transactionSchema = new Schema<ITransactionDocument>(
 transactionSchema.index({ vendor: 1, createdAt: -1 });
 transactionSchema.index({ 'buyer.phone': 1 }); // for the repeat-cancellation flag later
 transactionSchema.index({ status: 1, paymentExpiresAt: 1 }); // for the expiry job later
+transactionSchema.index({ 'dispute.status': 1, 'dispute.raisedAt': 1 });
 
 export const Transaction = model<ITransactionDocument>('Transaction', transactionSchema);
