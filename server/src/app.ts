@@ -4,6 +4,7 @@ import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import { errorHandler, notFound } from './middleware/error.middleware';
 import authRoutes from './modules/auth/auth.routes';
+import transactionRoutes from './modules/transactions/transaction.routes';
 
 const app = express();
 
@@ -18,6 +19,7 @@ app.use(
         legacyHeaders: false,
     })
 );
+app.use('/api/transactions', transactionRoutes);
 
 app.get('/api/health', (_req, res) => {
     res.json({ success: true, service: 'vouchpay-api', time: new Date().toISOString() });
