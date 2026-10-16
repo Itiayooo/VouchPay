@@ -1,6 +1,5 @@
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
-import { env } from '../config/env';
 import { AppError } from './AppError';
 
 export interface AccessPayload {
@@ -13,17 +12,16 @@ export interface RefreshPayload {
 }
 
 export function signAccessToken(payload: AccessPayload): string {
-    return jwt.sign(payload, env.JWT_ACCESS_SECRET, { expiresIn: '15m' });
+    return jwt.sign(payload, process.env.JWT_ACCESS_SECRET as string, { expiresIn: '15m' });
 }
 
 export function signRefreshToken(sub: string): string {
-    // jti makes every refresh token unique, even if issued in the same second
-    return jwt.sign({ sub, jti: crypto.randomUUID() }, env.JWT_REFRESH_SECRET, { expiresIn: '30d' });
+    return jwt.sign({ sub, jti: crypto.randomUUID() }, process.env.JWT_REFRESH_SECRET as string, { expiresIn: '30d' });
 }
 
 export function verifyAccessToken(token: string): AccessPayload {
     try {
-        return jwt.verify(token, env.JWT_ACCESS_SECRET) as unknown as AccessPayload;
+        return jwt.verify(token, process.env.JWT_ACCESS_SECRET as string) as unknown as AccessPayload;
     } catch {
         throw new AppError(401, 'Invalid or expired token', 'TOKEN_INVALID');
     }
@@ -31,7 +29,7 @@ export function verifyAccessToken(token: string): AccessPayload {
 
 export function verifyRefreshToken(token: string): RefreshPayload {
     try {
-        return jwt.verify(token, env.JWT_REFRESH_SECRET) as unknown as RefreshPayload;
+        return jwt.verify(token, process.env.JWT_REFRESH_SECRET as string) as unknown as RefreshPayload;
     } catch {
         throw new AppError(401, 'Invalid or expired refresh token', 'REFRESH_INVALID');
     }

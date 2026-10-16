@@ -23,6 +23,7 @@ export interface IVendor {
 }
 
 export interface IVendorDocument extends IVendor, Document {
+    id: string;
     comparePassword(candidate: string): Promise<boolean>;
 }
 

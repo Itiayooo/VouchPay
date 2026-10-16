@@ -2,14 +2,13 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
-import { env } from './config/env';
 import { errorHandler, notFound } from './middleware/error.middleware';
 import authRoutes from './modules/auth/auth.routes';
 
 const app = express();
 
 app.use(helmet());
-app.use(cors({ origin: env.CLIENT_URL, credentials: true }));
+app.use(cors({ origin: process.env.CLIENT_URL, credentials: true }));
 app.use(express.json());
 app.use(
     rateLimit({
