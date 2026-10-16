@@ -6,7 +6,7 @@ import { errorHandler, notFound } from './middleware/error.middleware';
 import authRoutes from './modules/auth/auth.routes';
 import transactionRoutes from './modules/transactions/transaction.routes';
 import paymentRoutes from './modules/payments/payment.routes';
-
+import handoverRoutes from './modules/handover/handover.routes';
 
 const app = express();
 
@@ -29,6 +29,8 @@ app.use(
 );
 app.use('/api/transactions', transactionRoutes);
 app.use('/api/payments', paymentRoutes);
+app.use('/api/handover', handoverRoutes);
+
 
 app.get('/api/health', (_req, res) => {
     res.json({ success: true, service: 'vouchpay-api', time: new Date().toISOString() });
