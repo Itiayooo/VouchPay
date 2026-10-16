@@ -4,8 +4,15 @@ import { calculateAmounts, toKobo } from './transaction.fees';
 import { Transaction, generateReference } from './transaction.model';
 import { TRANSACTION_STATUSES, TransactionStatus, canTransition } from './transaction.states';
 import { CreateTransactionInput } from './transaction.schema';
+import { Vendor } from '../vendors/vendor.model';
 
 export async function createTransaction(vendorId: string, input: CreateTransactionInput) {
+
+    const vendor = await Vendor.findById(vendorId);
+    if (!vendor?.paystackRecipientCode) {
+        throw new AppError(400, 'Add your bank account before creating escrow links', 'NO_BANK_ACCOUNT');
+    }
+
     const itemAmount = toKobo(input.itemAmount);
     const deliveryFee = toKobo(input.deliveryFee);
     const amounts = calculateAmounts(itemAmount, deliveryFee);
@@ -17,6 +24,7 @@ export async function createTransaction(vendorId: string, input: CreateTransacti
             return await Transaction.create({
                 reference,
                 vendor: vendorId,
+                payoutRecipientCode: vendor.paystackRecipientCode,
                 buyer: input.buyer,
                 itemDescription: input.itemDescription,
                 itemAmount,
@@ -75,7 +83,7 @@ export async function getTransaction(id: string, requester: { id: string; role: 
 export async function getPublicByReference(reference: string) {
     const txn = await Transaction.findOne({ reference: reference.toUpperCase() })
         .populate('vendor', 'businessName verified rating instagramHandle')
-        .select('-statusHistory -platformFee -vendorPayout -notes');
+        .select('-statusHistory -platformFee -vendorPayout -notes -payoutRecipientCode -payoutReference -payoutFailureReason -transferCode');
     if (!txn) throw new AppError(404, 'Transaction not found');
     return txn;
 }
