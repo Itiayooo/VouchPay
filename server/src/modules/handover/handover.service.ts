@@ -6,6 +6,7 @@ import { Transaction } from '../transactions/transaction.model';
 import { getTransaction, transitionStatus } from '../transactions/transaction.service';
 import { deriveBuyerToken, derivePin, deriveQrToken, safeEqual } from './handover.crypto';
 import { processRelease } from '../payouts/payout.service';
+import { findOrderForBuyer } from './buyer.auth';
 
 const MAX_ATTEMPTS = 5;
 const LOCK_MINUTES = 30;
@@ -90,5 +91,22 @@ export async function confirmHandover(scanToken: string, input: { qrToken?: stri
         console.error(`Release failed for ${txn.reference}`, err); // stays release_pending; the retry endpoint recovers it
     }
 
+    return { status: 'release_pending' };
+}
+
+export async function buyerConfirm(reference: string, buyerToken: string) {
+    const txn = await findOrderForBuyer(reference, buyerToken);
+    if (txn.status !== 'in_transit') {
+        throw new AppError(400, 'This order is not waiting for confirmation', 'NOT_IN_TRANSIT');
+    }
+    await transitionStatus(txn.id, 'in_transit', 'release_pending', 'Buyer confirmed receipt', {
+        deliveredAt: new Date(),
+        handoverMethod: 'buyer',
+    });
+    try {
+        await processRelease(txn.id);
+    } catch (err) {
+        console.error(`Release failed for ${txn.reference}`, err);
+    }
     return { status: 'release_pending' };
 }

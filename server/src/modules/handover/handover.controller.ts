@@ -1,5 +1,6 @@
 import { asyncHandler } from '../../utils/asyncHandler';
 import * as service from './handover.service';
+import { tokenFrom } from './buyer.auth';
 
 export const ship = asyncHandler(async (req, res) => {
     const data = await service.shipOrder(String(req.params.id), req.vendor!.id);
@@ -20,5 +21,10 @@ export const buyerView = asyncHandler(async (req, res) => {
 
 export const confirm = asyncHandler(async (req, res) => {
     const data = await service.confirmHandover(String(req.params.scanToken), req.body);
+    res.json({ success: true, data });
+});
+
+export const buyerConfirm = asyncHandler(async (req, res) => {
+    const data = await service.buyerConfirm(String(req.params.reference), tokenFrom(req));
     res.json({ success: true, data });
 });
