@@ -7,23 +7,7 @@ import Button from '../ui/Button';
 import Chip from '../ui/Chip';
 import FormError from '../ui/FormError';
 import TextAreaField from '../ui/TextAreaField';
-
-const REASONS: Record<string, string> = {
-    not_as_described: 'Not as described',
-    wrong_item: 'Wrong item',
-    damaged: 'Damaged',
-    fake: 'Fake or counterfeit',
-    not_received: 'Never received it',
-    changed_mind: 'Changed their mind',
-    other: 'Something else',
-};
-
-const RESOLUTIONS: Record<string, string> = {
-    refund_full: 'Refunded to the buyer in full',
-    refund_keep_delivery: 'Refunded to the buyer, and you keep the delivery fee',
-    release_full: 'Released to you in full',
-    split: 'Split between you and the buyer',
-};
+import { REASONS, RESOLUTIONS } from '../../lib/disputes';
 
 export default function DisputePanel({ t, onChanged }: { t: Transaction; onChanged: () => Promise<void> }) {
     const d = t.dispute;

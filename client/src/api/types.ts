@@ -60,6 +60,7 @@ export interface Transaction {
         resolution?: string;
         mediatorNotes?: string;
         resolvedAt?: string;
+        vendor?: string | VendorRef;
     };
 }
 
@@ -79,6 +80,25 @@ export interface VendorStats {
     needsAttention: number;
     refundedOrders: number;
     completionRate: number | null;
+    byStatus: Record<string, number>;
+    daily: { date: string; amount: number; count: number }[];
+}
+
+export interface VendorRef {
+    id: string;
+    name: string;
+    businessName: string;
+    phone?: string;
+    email?: string;
+}
+
+export interface AdminStats {
+    volume: { paidOrders: number; totalPaid: number };
+    heldInEscrow: { amount: number; orders: number };
+    platformFeesEarned: number;
+    disputes: { open: number; oldestOpenReference: string | null; oldestOpenSince: string | null };
+    needsAttention: { failedPayouts: number; failedRefunds: number; stuckPayouts: number };
+    vendors: { total: number; newThisWeek: number };
     byStatus: Record<string, number>;
     daily: { date: string; amount: number; count: number }[];
 }
