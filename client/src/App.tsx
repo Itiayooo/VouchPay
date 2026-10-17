@@ -12,6 +12,8 @@ import PayPage from './pages/PayPage';
 import Track from './pages/Track';
 import OrderDetail from './pages/OrderDetail';
 import HandoverPage from './pages/HandoverPage';
+import Admin from './pages/Admin';
+import AdminOrder from './pages/AdminOrder';
 
 export default function App() {
   return (
@@ -34,7 +36,8 @@ export default function App() {
 
       <Route element={<RequireAuth role="admin" />}>
         <Route element={<AppShell />}>
-          <Route path="/admin" element={<Soon name="Admin" />} />
+          <Route path="/admin" element={<Admin />} />
+          <Route path="/admin/orders/:id" element={<AdminOrder />} />
         </Route>
       </Route>
 

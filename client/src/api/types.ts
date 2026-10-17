@@ -23,6 +23,7 @@ export interface Vendor {
 export interface Transaction {
     id: string;
     reference: string;
+    vendor?: string | VendorRef;
     buyer: { name: string; phone: string; email?: string };
     itemDescription: string;
     itemAmount: number; // all money in kobo
@@ -60,7 +61,6 @@ export interface Transaction {
         resolution?: string;
         mediatorNotes?: string;
         resolvedAt?: string;
-        vendor?: string | VendorRef;
     };
 }
 
