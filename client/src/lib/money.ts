@@ -11,3 +11,5 @@ export function formatNaira(kobo: number): string {
 }
 
 export const toKobo = (naira: number) => Math.round(naira * 100);
+export const digitsOnly = (v: string) => v.replace(/\D/g, '').replace(/^0+(?=\d)/, '').slice(0, 9);
+export const withCommas = (digits: string) => (digits ? Number(digits).toLocaleString('en-NG') : '');

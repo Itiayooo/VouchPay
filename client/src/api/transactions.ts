@@ -17,3 +17,18 @@ export function listTransactions(params: ListParams = {}) {
     const qs = q.toString();
     return api<Paginated<Transaction>>(`/transactions${qs ? `?${qs}` : ''}`, { auth: true });
 }
+
+export interface CreateTransactionInput {
+    itemDescription: string;
+    itemAmount: number; // naira
+    deliveryFee: number; // naira
+    deliveryType: 'local' | 'courier';
+    dispatchWindowDays: number;
+    buyer: { name: string; phone: string; email?: string };
+    notes?: string;
+}
+
+export const createTransaction = (input: CreateTransactionInput) =>
+    api<{ transaction: Transaction }>('/transactions', { method: 'POST', body: input, auth: true }).then(
+        (d) => d.transaction
+    );
