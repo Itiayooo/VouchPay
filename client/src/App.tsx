@@ -9,7 +9,7 @@ import Dashboard from './pages/Dashboard';
 import CreateOrder from './pages/CreateOrder';
 import Settings from './pages/Settings';
 import PayPage from './pages/PayPage';
-import Track from './pages/Track';,
+import Track from './pages/Track';
 
 export default function App() {
   return (

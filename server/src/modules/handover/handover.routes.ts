@@ -15,6 +15,7 @@ const scanLimiter = rateLimit({
 });
 
 router.get('/buyer/:reference', controller.buyerView);
+router.get('/:scanToken', controller.scanInfo);
 router.post('/:scanToken/confirm', scanLimiter, validate(confirmHandoverSchema), controller.confirm);
 router.post('/buyer/:reference/confirm', scanLimiter, controller.buyerConfirm);
 

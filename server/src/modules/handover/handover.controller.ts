@@ -28,3 +28,9 @@ export const buyerConfirm = asyncHandler(async (req, res) => {
     const data = await service.buyerConfirm(String(req.params.reference), tokenFrom(req));
     res.json({ success: true, data });
 });
+
+export const scanInfo = asyncHandler(async (req, res) => {
+    const data = await service.getScanInfo(String(req.params.scanToken));
+    res.set('Cache-Control', 'no-store');
+    res.json({ success: true, data });
+});

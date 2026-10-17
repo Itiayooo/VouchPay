@@ -110,3 +110,16 @@ export async function buyerConfirm(reference: string, buyerToken: string) {
     }
     return { status: 'release_pending' };
 }
+
+export async function getScanInfo(scanToken: string) {
+    const txn = await Transaction.findOne({ scanTokenHash: hashToken(scanToken) });
+    if (!txn) throw new AppError(404, 'This handover link is invalid or has expired');
+    return {
+        reference: txn.reference,
+        status: txn.status,
+        itemDescription: txn.itemDescription,
+        buyerName: txn.buyer.name.trim().split(/\s+/)[0],
+        deliveryType: txn.deliveryType,
+        autoReleaseHours: txn.autoReleaseHours,
+    };
+}

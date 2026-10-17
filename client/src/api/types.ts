@@ -44,6 +44,23 @@ export interface Transaction {
     cancelledAt?: string;
     createdAt: string;
     updatedAt: string;
+    statusHistory?: { status: string; at: string; note?: string }[];
+    handoverMethod?: 'qr' | 'pin' | 'buyer';
+    payoutFailureReason?: string;
+    refundAmount?: number;
+    refundFailureReason?: string;
+    dispute?: {
+        raisedAt?: string;
+        reason?: string;
+        description?: string;
+        evidence?: string[];
+        vendorResponse?: string;
+        vendorEvidence?: string[];
+        status?: 'open' | 'resolved';
+        resolution?: string;
+        mediatorNotes?: string;
+        resolvedAt?: string;
+    };
 }
 
 export interface Paginated<T> {

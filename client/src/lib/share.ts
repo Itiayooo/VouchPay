@@ -8,3 +8,5 @@ export function toWhatsAppNumber(phone: string): string {
 
 export const whatsappUrl = (phone: string, text: string) =>
     `https://wa.me/${toWhatsAppNumber(phone)}?text=${encodeURIComponent(text)}`;
+
+export const whatsappShareUrl = (text: string) => `https://wa.me/?text=${encodeURIComponent(text)}`;
