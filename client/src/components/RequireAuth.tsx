@@ -1,6 +1,5 @@
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-// import Spinner from './Spinner';
 import Spinner from './Spinner';
 
 export default function RequireAuth({ role }: { role?: 'admin' }) {
