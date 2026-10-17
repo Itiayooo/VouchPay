@@ -45,7 +45,7 @@ export async function getBuyerHandover(reference: string, buyerToken: string) {
     if (!txn || !txn.paystackReference || !buyerToken || !safeEqual(buyerToken, deriveBuyerToken(txn.paystackReference))) {
         throw new AppError(404, 'Order not found');
     }
-    if (!txn.handoverSalt || !['funded', 'in_transit'].includes(txn.status)) {
+    if (!txn.handoverSalt || !['funded', 'in_transit', 'delivered'].includes(txn.status)) {
         throw new AppError(400, 'There is no active handover code for this order', 'NO_ACTIVE_CODE');
     }
     const qrToken = deriveQrToken(txn.reference, txn.handoverSalt);
