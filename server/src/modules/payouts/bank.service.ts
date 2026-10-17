@@ -1,3 +1,4 @@
+import crypto from 'crypto';
 import { AppError } from '../../utils/AppError';
 import * as paystack from '../payments/paystack.service';
 import { Vendor } from '../vendors/vendor.model';
@@ -6,22 +7,51 @@ type Bank = { name: string; code: string };
 let cache: { at: number; banks: Bank[] } | null = null;
 const ONE_DAY = 24 * 60 * 60 * 1000;
 
+const isTestMode = () => (process.env.PAYSTACK_SECRET_KEY ?? '').startsWith('sk_test_');
+
+// Any Paystack failure except a bad key. In test mode there are no real banks to ask.
+const isLookupFailure = (err: unknown) =>
+    err instanceof AppError && Boolean(err.code?.startsWith('PAYSTACK_')) && err.code !== 'PAYSTACK_401';
+
 export async function getBanks(): Promise<Bank[]> {
     if (cache && Date.now() - cache.at < ONE_DAY) return cache.banks;
+
+    const seen = new Set<string>();
     const all: Bank[] = [];
-    for (let page = 1; page <= 5; page++) {
-        const batch = await paystack.listBanks(page);
-        all.push(...batch.map((b) => ({ name: b.name, code: b.code })));
-        if (batch.length < 100) break;
+    let cursor: string | undefined;
+
+    for (let i = 0; i < 10; i++) {
+        const { banks, next } = await paystack.listBanksPage(cursor);
+        let added = 0;
+        for (const b of banks) {
+            const key = `${b.code}|${b.name}`;
+            if (!seen.has(key)) {
+                seen.add(key);
+                all.push({ name: b.name, code: b.code });
+                added++;
+            }
+        }
+        if (!next || added === 0) break; // done, or the page repeated
+        cursor = next;
     }
+
     cache = { at: Date.now(), banks: all.sort((a, b) => a.name.localeCompare(b.name)) };
     return cache.banks;
 }
 
-export async function resolveAccount(accountNumber: string, bankCode: string) {
-    const data = await paystack.resolveAccount(accountNumber, bankCode);
-    return { accountName: data.account_name };
+async function resolveName(accountNumber: string, bankCode: string) {
+    try {
+        const data = await paystack.resolveAccount(accountNumber, bankCode);
+        return { accountName: data.account_name, simulated: false };
+    } catch (err) {
+        if (isTestMode() && isLookupFailure(err)) {
+            return { accountName: 'TEST MODE ACCOUNT', simulated: true };
+        }
+        throw err;
+    }
 }
+
+export const resolveAccount = (accountNumber: string, bankCode: string) => resolveName(accountNumber, bankCode);
 
 export async function saveBankAccount(
     vendorId: string,
@@ -35,12 +65,24 @@ export async function saveBankAccount(
     const bank = (await getBanks()).find((b) => b.code === input.bankCode);
     if (!bank) throw new AppError(400, 'Unknown bank', 'BAD_BANK');
 
-    const resolved = await paystack.resolveAccount(input.accountNumber, input.bankCode);
-    const recipient = await paystack.createRecipient({
-        name: resolved.account_name,
-        accountNumber: input.accountNumber,
-        bankCode: input.bankCode,
-    });
+    const resolved = await resolveName(input.accountNumber, input.bankCode);
+
+    let recipientCode: string;
+    try {
+        const recipient = await paystack.createRecipient({
+            name: resolved.accountName,
+            accountNumber: input.accountNumber,
+            bankCode: input.bankCode,
+        });
+        recipientCode = recipient.recipient_code;
+    } catch (err) {
+        // A simulated account has no real recipient. Payouts to it are simulated too (test mode only).
+        if (isTestMode() && resolved.simulated && isLookupFailure(err)) {
+            recipientCode = `RCP_SIM_${crypto.randomUUID()}`;
+        } else {
+            throw err;
+        }
+    }
 
     return Vendor.findByIdAndUpdate(
         vendorId,
@@ -48,8 +90,8 @@ export async function saveBankAccount(
             bankName: bank.name,
             bankCode: input.bankCode,
             accountNumber: input.accountNumber,
-            accountName: resolved.account_name,
-            paystackRecipientCode: recipient.recipient_code,
+            accountName: resolved.accountName,
+            paystackRecipientCode: recipientCode,
         },
         { new: true }
     );

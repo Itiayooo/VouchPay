@@ -124,3 +124,18 @@ export function createRefund(p: { transaction: string; amount: number; note: str
 export function listRefunds(transaction: string) {
     return paystackRequest<PaystackRefundData[]>(`/refund?transaction=${encodeURIComponent(transaction)}`, 'GET');
 }
+
+export async function listBanksPage(cursor?: string) {
+    const qs = `country=nigeria&currency=NGN&perPage=100${cursor ? `&next=${encodeURIComponent(cursor)}` : ''}`;
+    const res = await fetch(`${BASE_URL}/bank?${qs}`, {
+        headers: { Authorization: `Bearer ${process.env.PAYSTACK_SECRET_KEY}` },
+    });
+    const json: any = await res.json().catch(() => ({}));
+    if (!res.ok || !json.status) {
+        throw new AppError(502, json.message || 'Payment provider error', `PAYSTACK_${res.status}`);
+    }
+    return {
+        banks: json.data as { name: string; code: string }[],
+        next: (json.meta?.next as string | null) ?? null,
+    };
+}

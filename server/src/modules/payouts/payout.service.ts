@@ -74,12 +74,15 @@ export async function processRelease(id: string) {
     if (!claimed) return;
 
     try {
-        const transfer = await paystack.initiateTransfer({
-            amount: claimed.vendorPayout,
-            recipient: claimed.payoutRecipientCode as string,
-            reference,
-            reason: `VouchPay ${claimed.reference}`,
-        });
+        const simulated = claimed.payoutRecipientCode?.startsWith('RCP_SIM_');
+        const transfer: paystack.PaystackTransferData = simulated
+            ? { reference, amount: claimed.vendorPayout, status: 'success', transfer_code: `TRF_SIM_${reference}` }
+            : await paystack.initiateTransfer({
+                amount: claimed.vendorPayout,
+                recipient: claimed.payoutRecipientCode as string,
+                reference,
+                reason: `VouchPay ${claimed.reference}`,
+            });
         if (transfer.transfer_code) {
             await Transaction.updateOne({ _id: claimed._id }, { transferCode: transfer.transfer_code });
         }
