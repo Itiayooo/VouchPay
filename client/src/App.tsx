@@ -8,6 +8,8 @@ import AppShell from './components/AppShell';
 import Dashboard from './pages/Dashboard';
 import CreateOrder from './pages/CreateOrder';
 import Settings from './pages/Settings';
+import PayPage from './pages/PayPage';
+import Track from './pages/Track';,
 
 export default function App() {
   return (
@@ -15,7 +17,8 @@ export default function App() {
       <Route path="/" element={<Landing />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
-      <Route path="/pay/:reference" element={<Soon name="Payment page" />} />
+      <Route path="/pay/:reference" element={<PayPage />} />
+      <Route path="/track" element={<Track />} />
       <Route path="/handover/:token" element={<Soon name="Rider handover" />} />
 
       <Route element={<RequireAuth />}>
