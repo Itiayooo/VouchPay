@@ -11,6 +11,7 @@ import Settings from './pages/Settings';
 import PayPage from './pages/PayPage';
 import Track from './pages/Track';
 import OrderDetail from './pages/OrderDetail';
+import HandoverPage from './pages/HandoverPage';
 
 export default function App() {
   return (
@@ -20,7 +21,7 @@ export default function App() {
       <Route path="/register" element={<Register />} />
       <Route path="/pay/:reference" element={<PayPage />} />
       <Route path="/track" element={<Track />} />
-      <Route path="/handover/:token" element={<Soon name="Rider handover" />} />
+      <Route path="/handover/:token" element={<HandoverPage />} />
 
       <Route element={<RequireAuth />}>
         <Route element={<AppShell />}>

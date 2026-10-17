@@ -188,7 +188,7 @@ export default function BankSection() {
                     />
                     <datalist id="vouchpay-banks">
                         {banks?.map((b) => (
-                                          <option key={`${b.code}-${b.name}`} value={b.name} />
+                            <option key={`${b.code}-${b.name}`} value={b.name} />
                         ))}
                     </datalist>
 
