@@ -19,3 +19,49 @@ export interface Vendor {
     isActive: boolean;
     joinedAt: string;
 }
+
+export interface Transaction {
+    id: string;
+    reference: string;
+    buyer: { name: string; phone: string; email?: string };
+    itemDescription: string;
+    itemAmount: number; // all money in kobo
+    deliveryFee: number;
+    platformFee: number;
+    totalAmount: number;
+    vendorPayout: number;
+    status: string;
+    deliveryType: 'local' | 'courier';
+    dispatchWindowDays: number;
+    autoReleaseHours: number;
+    escrowLink: string;
+    notes?: string;
+    paymentExpiresAt: string;
+    paidAt?: string;
+    shippedAt?: string;
+    deliveredAt?: string;
+    releasedAt?: string;
+    cancelledAt?: string;
+    createdAt: string;
+    updatedAt: string;
+}
+
+export interface Paginated<T> {
+    items: T[];
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+}
+
+export interface VendorStats {
+    earned: { amount: number; orders: number; itemVolume: number; feesPaid: number };
+    inEscrow: { amount: number; orders: number };
+    awaitingPayment: number;
+    openDisputes: number;
+    needsAttention: number;
+    refundedOrders: number;
+    completionRate: number | null;
+    byStatus: Record<string, number>;
+    daily: { date: string; amount: number; count: number }[];
+}
