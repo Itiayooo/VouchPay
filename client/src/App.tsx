@@ -4,6 +4,8 @@ import Soon from './components/Soon';
 import Landing from './pages/Landing';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import AppShell from './components/AppShell';
+import Dashboard from './pages/Dashboard';
 
 export default function App() {
   return (
@@ -15,14 +17,18 @@ export default function App() {
       <Route path="/handover/:token" element={<Soon name="Rider handover" />} />
 
       <Route element={<RequireAuth />}>
-        <Route path="/dashboard" element={<Soon name="Dashboard" />} />
-        <Route path="/orders/new" element={<Soon name="Create escrow" />} />
-        <Route path="/orders/:id" element={<Soon name="Order detail" />} />
-        <Route path="/settings" element={<Soon name="Settings" />} />
+        <Route element={<AppShell />}>
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/orders/new" element={<Soon name="Create escrow" />} />
+          <Route path="/orders/:id" element={<Soon name="Order detail" />} />
+          <Route path="/settings" element={<Soon name="Settings" />} />
+        </Route>
       </Route>
 
       <Route element={<RequireAuth role="admin" />}>
-        <Route path="/admin" element={<Soon name="Admin" />} />
+        <Route element={<AppShell />}>
+          <Route path="/admin" element={<Soon name="Admin" />} />
+        </Route>
       </Route>
 
       <Route path="*" element={<Soon name="Page not found" />} />
