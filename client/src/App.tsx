@@ -10,6 +10,7 @@ import CreateOrder from './pages/CreateOrder';
 import Settings from './pages/Settings';
 import PayPage from './pages/PayPage';
 import Track from './pages/Track';
+import OrderDetail from './pages/OrderDetail';
 
 export default function App() {
   return (
@@ -25,7 +26,7 @@ export default function App() {
         <Route element={<AppShell />}>
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/orders/new" element={<CreateOrder />} />
-          <Route path="/orders/:id" element={<Soon name="Order detail" />} />
+          <Route path="/orders/:id" element={<OrderDetail />} />
           <Route path="/settings" element={<Settings />} />
         </Route>
       </Route>
