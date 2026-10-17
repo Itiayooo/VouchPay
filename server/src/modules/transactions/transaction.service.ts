@@ -76,6 +76,7 @@ export async function getTransaction(id: string, requester: { id: string; role: 
     if (!txn || (!isOwner && requester.role !== 'admin')) {
         throw new AppError(404, 'Transaction not found');
     }
+    if (requester.role === 'admin') await txn.populate('vendor', 'name businessName phone email');
     return txn;
 }
 

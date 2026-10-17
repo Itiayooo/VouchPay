@@ -131,3 +131,18 @@ export async function adminStats() {
         daily,
     };
 }
+
+// Orders where money movement went wrong or has been stuck for a while
+export async function attentionList() {
+    const stuckBefore = new Date(Date.now() - 15 * 60 * 1000);
+    const items = await Transaction.find({
+        $or: [
+            { status: { $in: ['release_failed', 'refund_failed'] } },
+            { status: { $in: ['release_pending', 'refund_pending'] }, updatedAt: { $lt: stuckBefore } },
+        ],
+    })
+        .sort({ updatedAt: 1 })
+        .limit(50)
+        .populate('vendor', 'businessName');
+    return { items };
+}

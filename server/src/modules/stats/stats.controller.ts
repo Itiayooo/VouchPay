@@ -8,3 +8,7 @@ export const vendor = asyncHandler(async (req, res) => {
 export const admin = asyncHandler(async (_req, res) => {
     res.json({ success: true, data: await service.adminStats() });
 });
+
+export const adminAttention = asyncHandler(async (_req, res) => {
+    res.json({ success: true, data: await service.attentionList() });
+});

@@ -7,5 +7,6 @@ const router = Router();
 router.use(authenticate);
 router.get('/vendor', controller.vendor);
 router.get('/admin', requireRole('admin'), controller.admin);
+router.get('/admin/attention', requireRole('admin'), controller.adminAttention);
 
 export default router;
