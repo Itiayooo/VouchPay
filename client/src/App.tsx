@@ -2,13 +2,15 @@ import { Route, Routes } from 'react-router-dom';
 import RequireAuth from './components/RequireAuth';
 import Soon from './components/Soon';
 import Landing from './pages/Landing';
+import Login from './pages/Login';
+import Register from './pages/Register';
 
 export default function App() {
   return (
     <Routes>
       <Route path="/" element={<Landing />} />
-      <Route path="/login" element={<Soon name="Login" />} />
-      <Route path="/register" element={<Soon name="Register" />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
       <Route path="/pay/:reference" element={<Soon name="Payment page" />} />
       <Route path="/handover/:token" element={<Soon name="Rider handover" />} />
 
