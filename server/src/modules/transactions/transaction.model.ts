@@ -61,7 +61,9 @@ export interface ITransaction {
     transferCode?: string;
 }
 
-export interface ITransactionDocument extends ITransaction, Document { }
+export interface ITransactionDocument extends ITransaction, Document {
+    id: string;
+}
 
 const ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // no 0/O/1/I
 export function generateReference(): string {

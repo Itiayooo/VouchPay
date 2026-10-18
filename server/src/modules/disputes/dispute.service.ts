@@ -5,6 +5,7 @@ import { issueRefund } from '../refunds/refund.service';
 import { toKobo } from '../transactions/transaction.fees';
 import { Transaction } from '../transactions/transaction.model';
 import { getTransaction, transitionStatus } from '../transactions/transaction.service';
+import { signUpload } from '../uploads/upload.service';
 
 export async function raiseDispute(
     reference: string,
@@ -107,4 +108,20 @@ export async function resolveDispute(
         await issueRefund(txn.id);
     }
     return Transaction.findById(txn.id);
+}
+
+export async function buyerUploadSignature(reference: string, buyerToken: string) {
+    const txn = await findOrderForBuyer(reference, buyerToken);
+    if (!['in_transit', 'delivered'].includes(txn.status)) {
+        throw new AppError(400, 'Photos can only be added when opening a dispute', 'NOT_DISPUTABLE');
+    }
+    return signUpload(txn.reference);
+}
+
+export async function vendorUploadSignature(id: string, vendorId: string) {
+    const txn = await getTransaction(id, { id: vendorId, role: 'vendor' });
+    if (txn.status !== 'disputed' || txn.dispute?.status !== 'open') {
+        throw new AppError(400, 'There is no open dispute on this order', 'NO_OPEN_DISPUTE');
+    }
+    return signUpload(txn.reference);
 }

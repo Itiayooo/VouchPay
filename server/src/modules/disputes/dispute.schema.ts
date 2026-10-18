@@ -1,7 +1,11 @@
 import { z } from 'zod';
 import { DISPUTE_REASONS } from '../transactions/transaction.states';
+import { isOwnEvidenceUrl } from '../uploads/upload.service';
 
-const evidence = z.array(z.string().trim().url()).max(5).default([]);
+const evidence = z
+    .array(z.string().trim().url().refine(isOwnEvidenceUrl, 'Photos must be uploaded through VouchPay'))
+    .max(5)
+    .default([]);
 
 export const raiseDisputeSchema = z.object({
     reason: z.enum(DISPUTE_REASONS),

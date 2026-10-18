@@ -23,3 +23,13 @@ export const resolve = asyncHandler(async (req, res) => {
     const transaction = await service.resolveDispute(String(req.params.id), req.vendor!.id, req.body);
     res.json({ success: true, data: { transaction } });
 });
+
+export const buyerUploadSignature = asyncHandler(async (req, res) => {
+    const data = await service.buyerUploadSignature(String(req.params.reference), tokenFrom(req));
+    res.json({ success: true, data });
+});
+
+export const vendorUploadSignature = asyncHandler(async (req, res) => {
+    const data = await service.vendorUploadSignature(String(req.params.id), req.vendor!.id);
+    res.json({ success: true, data });
+});
