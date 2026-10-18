@@ -5,6 +5,7 @@ import { Transaction, generateReference } from './transaction.model';
 import { TRANSACTION_STATUSES, TransactionStatus, canTransition } from './transaction.states';
 import { CreateTransactionInput } from './transaction.schema';
 import { Vendor } from '../vendors/vendor.model';
+import { notifyTransition } from '../notifications/notification.service';
 
 export async function createTransaction(vendorId: string, input: CreateTransactionInput) {
 
@@ -126,5 +127,6 @@ export async function transitionStatus(
     if (!updated) {
         throw new AppError(409, 'This transaction was just updated. Refresh and try again.', 'STATE_CONFLICT');
     }
+    void notifyTransition(updated, from, to, note).catch((err) => console.error('[notify] failed', err));
     return updated;
 }
