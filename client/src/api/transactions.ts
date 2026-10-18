@@ -46,7 +46,7 @@ export const cancelUnpaid = (id: string) => api(`/transactions/${id}/cancel`, { 
 
 export const vendorCancel = (id: string) => api(`/refunds/${id}/vendor-cancel`, { method: 'POST', auth: true });
 
-export const respondToDispute = (id: string, response: string) =>
-    api(`/disputes/${id}/respond`, { method: 'POST', auth: true, body: { response } });
+export const respondToDispute = (id: string, response: string, evidence: string[] = []) =>
+    api(`/disputes/${id}/respond`, { method: 'POST', auth: true, body: { response, evidence } });
 
 export const retryPayout = (id: string) => api(`/payouts/${id}/retry`, { method: 'POST', auth: true });

@@ -5,6 +5,8 @@ import Button from '../ui/Button';
 import FormError from '../ui/FormError';
 import SelectField from '../ui/SelectField';
 import TextAreaField from '../ui/TextAreaField';
+import { getBuyerSignature } from '../../api/uploads';
+import PhotoPicker from '../ui/PhotoPicker';
 
 const REASONS = [
     { value: 'not_as_described', label: 'Not as described' },
@@ -31,6 +33,8 @@ export default function BuyerActions({ order, token, onChanged }: Props) {
     const [reason, setReason] = useState('');
     const [description, setDescription] = useState('');
     const [fieldErrors, setFieldErrors] = useState<{ reason?: string; description?: string }>({});
+    const [photos, setPhotos] = useState<string[]>([]);
+    const [uploading, setUploading] = useState(false);
 
     const beforeShipping = order.status === 'funded';
 
@@ -56,7 +60,7 @@ export default function BuyerActions({ order, token, onChanged }: Props) {
         if (description.trim().length < 10) found.description = 'Tell us a bit more, at least 10 characters.';
         setFieldErrors(found);
         if (Object.keys(found).length) return;
-        void run(() => openDispute(order.reference, token, { reason, description: description.trim() }));
+        void run(() => openDispute(order.reference, token, { reason, description: description.trim(), evidence: photos }));
     }
 
     const open = (p: Panel) => {
@@ -158,6 +162,7 @@ export default function BuyerActions({ order, token, onChanged }: Props) {
                             hint="Keep your photos and chats. You can share them if the mediator asks."
                             maxLength={1000}
                         />
+                        Tell us what happened
                         <div className="flex flex-wrap gap-3">
                             <Button type="submit" variant="dark" size="sm" loading={busy}>
                                 Open dispute

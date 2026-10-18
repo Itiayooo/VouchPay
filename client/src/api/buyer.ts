@@ -49,7 +49,11 @@ export const cancelOrder = (reference: string, token: string) =>
 export const confirmReceipt = (reference: string, token: string) =>
     api<{ status: string }>(`/handover/buyer/${ref(reference)}/confirm`, { method: 'POST', headers: asBuyer(token) });
 
-export const openDispute = (reference: string, token: string, input: { reason: string; description: string }) =>
+export const openDispute = (
+    reference: string,
+    token: string,
+    input: { reason: string; description: string; evidence?: string[] }
+) =>
     api<{ status: string }>(`/disputes/buyer/${ref(reference)}`, {
         method: 'POST',
         headers: asBuyer(token),
