@@ -12,7 +12,15 @@ import PhotoPicker from '../ui/PhotoPicker';
 import TextAreaField from '../ui/TextAreaField';
 import EvidenceGallery from './EvidenceGallery';
 
-export default function DisputePanel({ t, onChanged }: { t: Transaction; onChanged: () => Promise<void> }) {
+export default function DisputePanel({
+    t,
+    onChanged,
+    canRespond = true,
+}: {
+    t: Transaction;
+    onChanged: () => Promise<void>;
+    canRespond?: boolean;
+}) {
     const d = t.dispute;
     const [editing, setEditing] = useState(false);
     const [text, setText] = useState(d?.vendorResponse ?? '');
@@ -66,7 +74,13 @@ export default function DisputePanel({ t, onChanged }: { t: Transaction; onChang
                 <EvidenceGallery urls={d.evidence} />
             </div>
 
-            {open && (
+            {open && !canRespond && (
+                <div className="mt-5">
+                    {sellerSide ?? <p className="text-mute">The seller hasn't replied yet.</p>}
+                </div>
+            )}
+
+            {open && canRespond && (
                 <div className="mt-5">
                     {d.vendorResponse && !editing ? (
                         <div className="grid gap-3">

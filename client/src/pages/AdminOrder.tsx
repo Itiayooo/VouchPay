@@ -195,7 +195,7 @@ export default function AdminOrder() {
                 </div>
             </section>
 
-            <DisputePanel t={t} onChanged={() => load(true)} />
+            <DisputePanel t={t} onChanged={() => load(true)} canRespond={false} />
             {openDispute && <ResolveForm t={t} onChanged={() => load(true)} />}
             <RetryPanel key={t.status} t={t} onChanged={() => load(true)} />
 
