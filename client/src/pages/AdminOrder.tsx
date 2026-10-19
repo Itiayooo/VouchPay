@@ -12,6 +12,7 @@ import FormError from '../components/ui/FormError';
 import StatusBadge from '../components/ui/StatusBadge';
 import { formatDateTime } from '../lib/date';
 import { formatNaira } from '../lib/money';
+import EscalationPanel from '../components/admin/EscalationPanel';
 
 const LIVE = ['funded', 'in_transit', 'delivered', 'release_pending', 'refund_pending'];
 
@@ -196,6 +197,7 @@ export default function AdminOrder() {
             </section>
 
             <DisputePanel t={t} onChanged={() => load(true)} canRespond={false} />
+            {t.dispute?.status && <EscalationPanel t={t} onChanged={() => load(true)} />}
             {openDispute && <ResolveForm t={t} onChanged={() => load(true)} />}
             <RetryPanel key={t.status} t={t} onChanged={() => load(true)} />
 

@@ -67,6 +67,13 @@ export default function DisputePanel({
                 <Chip tone={open ? 'alert' : 'muted'}>{open ? 'Open' : 'Resolved'}</Chip>
             </div>
 
+            {open && d.escalated && (
+                <p className="mt-4 rounded-btn bg-sand px-4 py-3 text-amber">
+                    This dispute needs extended review, so it will take longer than usual. The money stays held until it is
+                    settled.
+                </p>
+            )}
+
             <div className="mt-4 rounded-btn bg-mint p-4">
                 <p className="text-sm text-mute">The buyer's side{d.raisedAt ? `, ${formatDateTime(d.raisedAt)}` : ''}</p>
                 <p className="mt-1 font-semibold">{REASONS[d.reason ?? ''] ?? d.reason}</p>

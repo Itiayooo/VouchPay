@@ -109,7 +109,13 @@ export default function DisputeQueue({ openCount }: { openCount: number }) {
                                     <div className="flex items-center justify-between gap-3 md:contents">
                                         <div className="md:w-[150px]">
                                             {tab === 'open' &&
-                                                (t.dispute?.vendorResponse ? <Chip tone="mint">Seller replied</Chip> : <Chip tone="amber">No reply yet</Chip>)}
+                                                (t.dispute?.escalated ? (
+                                                    <Chip tone="alert">Legal review</Chip>
+                                                ) : t.dispute?.vendorResponse ? (
+                                                    <Chip tone="mint">Seller replied</Chip>
+                                                ) : (
+                                                    <Chip tone="amber">No reply yet</Chip>
+                                                ))}
                                         </div>
                                         <p className="font-display text-[20px] font-medium tracking-[-0.03em] md:w-[120px] md:text-right">
                                             {formatNaira(t.totalAmount)}

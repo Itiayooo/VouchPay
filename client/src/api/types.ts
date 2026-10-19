@@ -61,6 +61,8 @@ export interface Transaction {
         resolution?: string;
         mediatorNotes?: string;
         resolvedAt?: string;
+        escalated?: boolean;
+        escalatedAt?: string;
     };
 }
 
@@ -101,4 +103,12 @@ export interface AdminStats {
     vendors: { total: number; newThisWeek: number };
     byStatus: Record<string, number>;
     daily: { date: string; amount: number; count: number }[];
+}
+
+export interface DisputeNote {
+    id: string;
+    kind: 'note' | 'escalated' | 'deescalated';
+    text: string;
+    createdAt: string;
+    author?: { name: string };
 }

@@ -44,7 +44,8 @@ export default function ResolveForm({ t, onChanged }: { t: Transaction; onChange
     const [resolution, setResolution] = useState<Resolution | ''>('');
     const [split, setSplit] = useState('');
     const [notes, setNotes] = useState('');
-    const [errors, setErrors] = useState<{ resolution?: string; split?: string; notes?: string }>({});
+    const [legalOk, setLegalOk] = useState(false);
+    const [errors, setErrors] = useState<{ resolution?: string; split?: string; notes?: string; legal?: string }>({});
     const [confirming, setConfirming] = useState(false);
     const [busy, setBusy] = useState(false);
     const [error, setError] = useState('');
@@ -57,6 +58,7 @@ export default function ResolveForm({ t, onChanged }: { t: Transaction; onChange
         if (!resolution) found.resolution = 'Choose a decision.';
         if (result && !result.ok && resolution === 'split') found.split = result.error || 'Enter how much the seller keeps.';
         if (notes.trim().length < 5) found.notes = 'Write a short note on why. Both sides can see it.';
+        if (t.dispute?.escalated && !legalOk) found.legal = 'Tick this to confirm before you continue.';
         setErrors(found);
         if (Object.keys(found).length === 0) setConfirming(true);
     }
@@ -69,6 +71,7 @@ export default function ResolveForm({ t, onChanged }: { t: Transaction; onChange
             resolution,
             mediatorNotes: notes.trim(),
             ...(resolution === 'split' ? { vendorAmount: Number(split) } : {}),
+            ...(t.dispute?.escalated ? { confirmedLegalOutcome: true } : {}),
         };
         try {
             await resolveDispute(t.id, input);
@@ -168,6 +171,26 @@ export default function ResolveForm({ t, onChanged }: { t: Transaction; onChange
                     }}
                     error={errors.notes}
                 />
+
+                {t.dispute?.escalated && (
+                    <div className="rounded-btn bg-sand p-4 text-amber">
+                        <p className="font-semibold">This dispute is on legal hold.</p>
+                        <label className="mt-2 flex items-start gap-3">
+                            <input
+                                type="checkbox"
+                                checked={legalOk}
+                                disabled={confirming || busy}
+                                onChange={(e) => {
+                                    setLegalOk(e.target.checked);
+                                    setErrors((er) => ({ ...er, legal: undefined }));
+                                }}
+                                className="mt-1.5 h-4 w-4 shrink-0 accent-forest"
+                            />
+                            <span>I have the legal outcome or written instructions for this decision, and I've noted them above.</span>
+                        </label>
+                        {errors.legal && <p className="mt-2 text-sm text-alert">{errors.legal}</p>}
+                    </div>
+                )}
 
                 {!confirming ? (
                     <div>
