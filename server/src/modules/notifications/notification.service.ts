@@ -250,3 +250,22 @@ export async function notifyReleaseReminder(txn: ITransactionDocument) {
         text,
     });
 }
+
+export async function notifyEscalation(txn: ITransactionDocument) {
+    const vendor = await Vendor.findById(txn.vendor).select('email');
+    const base = process.env.CLIENT_URL ?? '';
+    const lines = [
+        `The dispute on ${txn.itemDescription} (${txn.reference}) needs a closer look and will take longer than usual.`,
+        'The money stays held in the meantime. Nobody is paid or refunded until it is settled.',
+        'Please keep your photos, chats and receipts. We may contact you for more information.',
+    ];
+    const send = async (to: string | undefined, url: string, label: string) => {
+        if (!to) return;
+        const { html, text } = render({ heading: 'Your dispute needs extended review', lines, cta: { label, url } });
+        await sendEmail({ to, subject: `Dispute under extended review: ${txn.itemDescription}`, html, text });
+    };
+    await Promise.all([
+        send(txn.buyer.email, `${base}/pay/${txn.reference}`, 'Open your order'),
+        send(vendor?.email, `${base}/orders/${txn.id}`, 'Open the order'),
+    ]);
+}

@@ -33,3 +33,22 @@ export const vendorUploadSignature = asyncHandler(async (req, res) => {
     const data = await service.vendorUploadSignature(String(req.params.id), req.vendor!.id);
     res.json({ success: true, data });
 });
+
+export const notes = asyncHandler(async (req, res) => {
+    res.json({ success: true, data: { notes: await service.listNotes(String(req.params.id)) } });
+});
+
+export const addNote = asyncHandler(async (req, res) => {
+    await service.addNote(String(req.params.id), req.vendor!.id, req.body.text);
+    res.status(201).json({ success: true });
+});
+
+export const escalate = asyncHandler(async (req, res) => {
+    await service.escalate(String(req.params.id), req.vendor!.id, req.body.reason);
+    res.json({ success: true });
+});
+
+export const deescalate = asyncHandler(async (req, res) => {
+    await service.deescalate(String(req.params.id), req.vendor!.id, req.body.text);
+    res.json({ success: true });
+});

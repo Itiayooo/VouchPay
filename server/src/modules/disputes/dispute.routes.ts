@@ -3,7 +3,7 @@ import rateLimit from 'express-rate-limit';
 import { authenticate, requireRole } from '../../middleware/auth.middleware';
 import { validate } from '../../middleware/validate.middleware';
 import * as controller from './dispute.controller';
-import { raiseDisputeSchema, resolveDisputeSchema, respondDisputeSchema } from './dispute.schema';
+import { escalateSchema, noteSchema, raiseDisputeSchema, resolveDisputeSchema, respondDisputeSchema } from './dispute.schema';
 
 const router = Router();
 
@@ -21,6 +21,10 @@ router.post('/buyer/:reference/upload-signature', limiter, controller.buyerUploa
 
 // Everything below needs a login
 router.use(authenticate);
+router.get('/:id/notes', requireRole('admin'), controller.notes);
+router.post('/:id/notes', requireRole('admin'), validate(noteSchema), controller.addNote);
+router.post('/:id/escalate', requireRole('admin'), validate(escalateSchema), controller.escalate);
+router.post('/:id/deescalate', requireRole('admin'), validate(noteSchema), controller.deescalate);
 router.post('/:id/respond', validate(respondDisputeSchema), controller.respond);
 router.post('/:id/upload-signature', controller.vendorUploadSignature);
 router.get('/', requireRole('admin'), controller.list);

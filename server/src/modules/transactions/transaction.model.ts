@@ -54,6 +54,8 @@ export interface ITransaction {
         mediatorNotes?: string;
         resolvedAt?: Date;
         resolvedBy?: Types.ObjectId;
+        escalated?: boolean;
+        escalatedAt?: Date;
     };
     payoutRecipientCode?: string;
     payoutReference?: string;
