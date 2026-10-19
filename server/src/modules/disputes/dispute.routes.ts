@@ -18,10 +18,11 @@ const limiter = rateLimit({
 // Buyer (no login; proves identity with the x-buyer-token header)
 router.post('/buyer/:reference', limiter, validate(raiseDisputeSchema), controller.raise);
 router.post('/buyer/:reference/upload-signature', limiter, controller.buyerUploadSignature);
-router.post('/:id/upload-signature', controller.vendorUploadSignature);
 
+// Everything below needs a login
 router.use(authenticate);
 router.post('/:id/respond', validate(respondDisputeSchema), controller.respond);
+router.post('/:id/upload-signature', controller.vendorUploadSignature);
 router.get('/', requireRole('admin'), controller.list);
 router.post('/:id/resolve', requireRole('admin'), validate(resolveDisputeSchema), controller.resolve);
 
