@@ -41,6 +41,7 @@ export interface ITransaction {
     refundFailureReason?: string;
     refundThenRelease?: boolean;
     refundedAt?: Date;
+    releaseReminderSentAt?: Date;
     dispute?: {
         raisedAt?: Date;
         reason?: string;
@@ -127,6 +128,7 @@ const transactionSchema = new Schema<ITransactionDocument>(
         refundFailureReason: String,
         refundThenRelease: Boolean,
         refundedAt: Date,
+        releaseReminderSentAt: Date,
         dispute: {
             raisedAt: Date,
             reason: { type: String, enum: DISPUTE_REASONS },

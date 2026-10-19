@@ -227,3 +227,26 @@ export async function notifyTransition(
 
     await Promise.all(jobs);
 }
+
+export async function notifyReleaseReminder(txn: ITransactionDocument) {
+    if (!txn.buyer.email || !txn.deliveredAt) return;
+    const vendor = await Vendor.findById(txn.vendor).select('businessName');
+    const shop = vendor?.businessName ?? 'the seller';
+    const deadline = new Date(txn.deliveredAt.getTime() + txn.autoReleaseHours * 3_600_000);
+
+    const { html, text } = render({
+        heading: 'About 24 hours left to confirm delivery',
+        lines: [
+            `${shop} reported that ${txn.itemDescription} was delivered to you.`,
+            `If you have it and you're happy, confirm on your order page. If something is wrong, open a dispute before ${when(deadline)}.`,
+            "If we don't hear from you by then, the seller is paid automatically and this can't be undone.",
+        ],
+        cta: { label: 'Confirm or report a problem', url: `${process.env.CLIENT_URL ?? ''}/pay/${txn.reference}` },
+    });
+    await sendEmail({
+        to: txn.buyer.email,
+        subject: `Reminder: confirm delivery of ${txn.itemDescription}`,
+        html,
+        text,
+    });
+}
