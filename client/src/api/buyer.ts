@@ -59,3 +59,21 @@ export const openDispute = (
         headers: asBuyer(token),
         body: input,
     });
+
+export interface BuyerDispute {
+    status: 'open' | 'resolved';
+    reason: string;
+    description: string;
+    evidence: string[];
+    raisedAt?: string;
+    vendorResponse: string | null;
+    vendorEvidence: string[];
+    escalated: boolean;
+    resolution: string | null;
+    mediatorNotes: string | null;
+    resolvedAt: string | null;
+    refundAmount: number;
+}
+
+export const getDispute = (reference: string, token: string) =>
+    api<BuyerDispute>(`/disputes/buyer/${ref(reference)}`, { headers: asBuyer(token) });

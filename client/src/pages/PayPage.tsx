@@ -5,6 +5,7 @@ import { ApiError } from '../api/client';
 import BuyerActions from '../components/buyer/BuyerActions';
 import BuyerLayout from '../components/buyer/BuyerLayout';
 import CodePanel from '../components/buyer/CodePanel';
+import DisputeCard from '../components/buyer/DisputeCard';
 import OrderSummary from '../components/buyer/OrderSummary';
 import PayCard from '../components/buyer/PayCard';
 import StatusNote from '../components/buyer/StatusNote';
@@ -24,6 +25,15 @@ const LIVE = [
     'refund_failed',
 ];
 const HAS_CODE = ['funded', 'in_transit', 'delivered'];
+const DISPUTE_STATUSES = [
+    'disputed',
+    'release_pending',
+    'release_failed',
+    'released',
+    'refund_pending',
+    'refund_failed',
+    'refunded',
+];
 
 type Phase = 'loading' | 'confirming' | 'ready' | 'missing' | 'error';
 
@@ -156,6 +166,7 @@ export default function PayPage() {
             ) : (
                 <>
                     <StatusNote order={order} status={status} />
+                    {token && DISPUTE_STATUSES.includes(status) && <DisputeCard reference={order.reference} token={token} />}
                     {HAS_CODE.includes(status) &&
                         (token ? (
                             <>
