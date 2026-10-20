@@ -19,7 +19,8 @@ const limiter = rateLimit({
 router.post('/buyer/:reference', limiter, validate(raiseDisputeSchema), controller.raise);
 router.post('/buyer/:reference/upload-signature', limiter, controller.buyerUploadSignature);
 
-// Everything below needs a login
+
+router.get('/buyer/:reference', controller.buyerView);
 router.use(authenticate);
 router.get('/:id/notes', requireRole('admin'), controller.notes);
 router.post('/:id/notes', requireRole('admin'), validate(noteSchema), controller.addNote);

@@ -197,3 +197,24 @@ export async function deescalate(id: string, adminId: string, reason: string) {
     await DisputeNote.create({ transaction: txn._id, author: adminId, kind: 'deescalated', text: reason });
     return updated;
 }
+
+// What a buyer may see about their own dispute (never the admin's internal notes)
+export async function buyerDisputeView(reference: string, buyerToken: string) {
+    const txn = await findOrderForBuyer(reference, buyerToken);
+    const d = txn.dispute;
+    if (!d?.status) throw new AppError(404, 'There is no dispute on this order', 'NO_DISPUTE');
+    return {
+        status: d.status,
+        reason: d.reason,
+        description: d.description,
+        evidence: d.evidence ?? [],
+        raisedAt: d.raisedAt,
+        vendorResponse: d.vendorResponse ?? null,
+        vendorEvidence: d.vendorEvidence ?? [],
+        escalated: Boolean(d.escalated),
+        resolution: d.resolution ?? null,
+        mediatorNotes: d.mediatorNotes ?? null,
+        resolvedAt: d.resolvedAt ?? null,
+        refundAmount: txn.refundAmount ?? 0,
+    };
+}

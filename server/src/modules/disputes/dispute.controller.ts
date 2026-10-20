@@ -52,3 +52,9 @@ export const deescalate = asyncHandler(async (req, res) => {
     await service.deescalate(String(req.params.id), req.vendor!.id, req.body.text);
     res.json({ success: true });
 });
+
+export const buyerView = asyncHandler(async (req, res) => {
+    const data = await service.buyerDisputeView(String(req.params.reference), tokenFrom(req));
+    res.set('Cache-Control', 'no-store');
+    res.json({ success: true, data });
+});
