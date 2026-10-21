@@ -112,3 +112,12 @@ export interface DisputeNote {
     createdAt: string;
     author?: { name: string };
 }
+
+export interface ThreadMessage {
+    id: string;
+    role: 'buyer' | 'vendor' | 'admin';
+    text: string;
+    evidence: string[];
+    isQuestion: boolean;
+    createdAt: string;
+}

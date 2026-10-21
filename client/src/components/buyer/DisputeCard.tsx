@@ -6,6 +6,9 @@ import { REASONS } from '../../lib/disputes';
 import { formatNaira } from '../../lib/money';
 import EvidenceGallery from '../orders/EvidenceGallery';
 import Chip from '../ui/Chip';
+import { getBuyerMessages, postBuyerMessage } from '../../api/thread';
+import { getBuyerSignature } from '../../api/uploads';
+import DisputeThread from '../orders/DisputeThread';
 
 const OUTCOME: Record<string, string> = {
     refund_full: 'You were refunded in full',
@@ -94,6 +97,14 @@ export default function DisputeCard({ reference, token }: { reference: string; t
                     {data.mediatorNotes && <p className="mt-2 whitespace-pre-wrap text-night-mute">{data.mediatorNotes}</p>}
                 </div>
             )}
+
+            <DisputeThread
+                viewer="buyer"
+                locked={!open}
+                load={() => getBuyerMessages(reference, token)}
+                send={(input) => postBuyerMessage(reference, token, input)}
+                getSignature={() => getBuyerSignature(reference, token)}
+            />
         </section>
     );
 }

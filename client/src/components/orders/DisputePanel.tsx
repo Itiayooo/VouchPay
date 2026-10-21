@@ -11,6 +11,8 @@ import FormError from '../ui/FormError';
 import PhotoPicker from '../ui/PhotoPicker';
 import TextAreaField from '../ui/TextAreaField';
 import EvidenceGallery from './EvidenceGallery';
+import { getMessages, postMessage } from '../../api/thread';
+import DisputeThread from './DisputeThread';
 
 export default function DisputePanel({
     t,
@@ -147,6 +149,15 @@ export default function DisputePanel({
                     </div>
                 </div>
             )}
+
+            <DisputeThread
+                viewer={canRespond ? 'vendor' : 'admin'}
+                locked={!open}
+                load={() => getMessages(t.id)}
+                send={(input) => postMessage(t.id, input)}
+                getSignature={canRespond ? () => getVendorSignature(t.id) : undefined}
+                onChanged={onChanged}
+            />
         </section>
     );
 }
