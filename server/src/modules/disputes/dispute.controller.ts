@@ -1,6 +1,7 @@
 import { asyncHandler } from '../../utils/asyncHandler';
 import { tokenFrom } from '../handover/buyer.auth';
 import * as service from './dispute.service';
+import * as thread from './dispute.thread.service';
 
 export const raise = asyncHandler(async (req, res) => {
     const data = await service.raiseDispute(String(req.params.reference), tokenFrom(req), req.body);
@@ -34,6 +35,12 @@ export const vendorUploadSignature = asyncHandler(async (req, res) => {
     res.json({ success: true, data });
 });
 
+export const buyerView = asyncHandler(async (req, res) => {
+    const data = await service.buyerDisputeView(String(req.params.reference), tokenFrom(req));
+    res.set('Cache-Control', 'no-store');
+    res.json({ success: true, data });
+});
+
 export const notes = asyncHandler(async (req, res) => {
     res.json({ success: true, data: { notes: await service.listNotes(String(req.params.id)) } });
 });
@@ -53,8 +60,23 @@ export const deescalate = asyncHandler(async (req, res) => {
     res.json({ success: true });
 });
 
-export const buyerView = asyncHandler(async (req, res) => {
-    const data = await service.buyerDisputeView(String(req.params.reference), tokenFrom(req));
+export const buyerMessages = asyncHandler(async (req, res) => {
+    const messages = await thread.buyerMessages(String(req.params.reference), tokenFrom(req));
     res.set('Cache-Control', 'no-store');
-    res.json({ success: true, data });
+    res.json({ success: true, data: { messages } });
+});
+
+export const buyerPostMessage = asyncHandler(async (req, res) => {
+    await thread.buyerPost(String(req.params.reference), tokenFrom(req), req.body);
+    res.status(201).json({ success: true });
+});
+
+export const messages = asyncHandler(async (req, res) => {
+    const list = await thread.partyMessages(String(req.params.id), { id: req.vendor!.id, role: req.vendor!.role });
+    res.json({ success: true, data: { messages: list } });
+});
+
+export const postMessage = asyncHandler(async (req, res) => {
+    await thread.partyPost(String(req.params.id), { id: req.vendor!.id, role: req.vendor!.role }, req.body);
+    res.status(201).json({ success: true });
 });

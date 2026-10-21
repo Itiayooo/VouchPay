@@ -3,6 +3,7 @@ import type { TransactionStatus } from '../transactions/transaction.states';
 import { Vendor } from '../vendors/vendor.model';
 import { sendEmail } from './email.service';
 import { formatNaira, render, when, type Mail } from './email.templates';
+import type { IDisputeMessage } from '../disputes/dispute.message.model';
 
 const firstName = (n: string) => n.trim().split(/\s+/)[0];
 const dayCount = (n: number) => `${n} ${n === 1 ? 'day' : 'days'}`;
@@ -268,4 +269,55 @@ export async function notifyEscalation(txn: ITransactionDocument) {
         send(txn.buyer.email, `${base}/pay/${txn.reference}`, 'Open your order'),
         send(vendor?.email, `${base}/orders/${txn.id}`, 'Open the order'),
     ]);
+}
+
+export async function notifyDisputeMessage(txn: ITransactionDocument, msg: IDisputeMessage) {
+    const vendor = await Vendor.findById(txn.vendor).select('email');
+    const base = process.env.CLIENT_URL ?? '';
+    const admins = (process.env.ADMIN_EMAILS ?? '').split(',').map((s) => s.trim()).filter(Boolean);
+    const item = txn.itemDescription;
+    const snippet = msg.text.length > 300 ? `${msg.text.slice(0, 300)}…` : msg.text;
+    const photos = msg.evidence.length
+        ? [`They attached ${msg.evidence.length} ${msg.evidence.length === 1 ? 'photo' : 'photos'}.`]
+        : [];
+    const who = msg.authorRole === 'admin' ? 'the mediator' : msg.authorRole === 'buyer' ? 'the buyer' : 'the seller';
+
+    const targets = {
+        buyer: { to: [txn.buyer.email], url: `${base}/pay/${txn.reference}` },
+        vendor: { to: [vendor?.email], url: `${base}/orders/${txn.id}` },
+        admin: { to: admins, url: `${base}/admin/orders/${txn.id}` },
+    };
+
+    const jobs: Promise<void>[] = [];
+    for (const r of ['buyer', 'vendor', 'admin'] as const) {
+        if (r === msg.authorRole) continue; // the author doesn't need an email about their own message
+        const { to, url } = targets[r];
+        const heading =
+            r === 'admin'
+                ? `New message from ${who}`
+                : msg.authorRole === 'admin'
+                    ? msg.isQuestion
+                        ? 'The mediator has a question for you'
+                        : 'New message from the mediator'
+                    : `New message from ${who}`;
+        const { html, text } = render({
+            heading,
+            lines: [`On the dispute about ${item}:`, `"${snippet}"`, ...photos],
+            cta: { label: r === 'admin' ? 'Open the dispute' : 'Read and reply', url },
+            note: msg.isQuestion && r !== 'admin' ? 'Replying quickly helps the mediator decide sooner.' : undefined,
+        });
+        for (const addr of to) {
+            if (addr) {
+                jobs.push(
+                    sendEmail({
+                        to: addr,
+                        subject: r === 'admin' ? `Dispute message: ${txn.reference}` : `New message on your dispute: ${item}`,
+                        html,
+                        text,
+                    })
+                );
+            }
+        }
+    }
+    await Promise.all(jobs);
 }

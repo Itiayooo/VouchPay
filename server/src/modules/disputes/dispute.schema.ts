@@ -32,3 +32,9 @@ export const resolveDisputeSchema = z
 
 export const escalateSchema = z.object({ reason: z.string().trim().min(10).max(1000) });
 export const noteSchema = z.object({ text: z.string().trim().min(3).max(2000) });
+
+export const messageSchema = z.object({
+    text: z.string().trim().min(2).max(1500),
+    evidence,
+    isQuestion: z.boolean().optional(),
+});

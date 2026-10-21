@@ -133,7 +133,7 @@ export async function resolveDispute(
 
 export async function buyerUploadSignature(reference: string, buyerToken: string) {
     const txn = await findOrderForBuyer(reference, buyerToken);
-    if (!['in_transit', 'delivered'].includes(txn.status)) {
+    if (!['in_transit', 'delivered', 'disputed'].includes(txn.status)) {
         throw new AppError(400, 'Photos can only be added when opening a dispute', 'NOT_DISPUTABLE');
     }
     return signUpload(txn.reference);
