@@ -5,8 +5,8 @@ import Button from '../ui/Button';
 import FormError from '../ui/FormError';
 import SelectField from '../ui/SelectField';
 import TextAreaField from '../ui/TextAreaField';
-import { getBuyerSignature } from '../../api/uploads';
-import PhotoPicker from '../ui/PhotoPicker';
+// import { getBuyerSignature } from '../../api/uploads';
+// import PhotoPicker from '../ui/PhotoPicker';
 
 const REASONS = [
     { value: 'not_as_described', label: 'Not as described' },
@@ -33,8 +33,9 @@ export default function BuyerActions({ order, token, onChanged }: Props) {
     const [reason, setReason] = useState('');
     const [description, setDescription] = useState('');
     const [fieldErrors, setFieldErrors] = useState<{ reason?: string; description?: string }>({});
-    const [photos, setPhotos] = useState<string[]>([]);
-    const [uploading, setUploading] = useState(false);
+    const [photos] = useState<string[]>([]);
+    // const [photos, setPhotos] = useState<string[]>([]);
+    // const [uploading, setUploading] = useState(false);
 
     const beforeShipping = order.status === 'funded';
 
